@@ -29,16 +29,23 @@ for (const file of REQUIRED) {
 const skillSource = readFileSync(path.join(SKILL, "SKILL.md"), "utf8");
 if (!/^---\nname: vibehub\n/m.test(skillSource)) throw new Error("SKILL.md 缺少正确的 name");
 if (!/^description: .+/m.test(skillSource)) throw new Error("SKILL.md 缺少 description");
-if (!skillSource.includes("只做好四件事")) throw new Error("SKILL.md 没有说明四项核心能力");
-if (!skillSource.includes("第一次使用要主动")) throw new Error("SKILL.md 没有主动的首次使用流程");
-if (!skillSource.includes("严格控制内置浏览器")) throw new Error("SKILL.md 没有内置浏览器边界");
+if (!skillSource.includes("VibeHub 只负责四件事")) throw new Error("SKILL.md 没有说明四项核心能力");
+if (!skillSource.includes("首次使用：直接给方向")) throw new Error("SKILL.md 没有直接的首次使用流程");
+if (!skillSource.includes("不问“你想学什么”或“你想做什么”")) {
+  throw new Error("首次使用仍可能把选择重新推给用户");
+}
+if (!skillSource.includes("不是通用网页制作、截图还原、代码修复或项目开发 Skill")) {
+  throw new Error("SKILL.md 没有说明学习能力边界");
+}
+if (!skillSource.includes("浏览器有三种处理")) throw new Error("SKILL.md 没有明确浏览器分流");
 if (!skillSource.includes("不要自动打开第一课")) throw new Error("宽泛目标仍可能自动打开课程");
 
 const browserProtocol = readFileSync(path.join(SKILL, "references", "browser-protocol.md"), "utf8");
-if (!browserProtocol.includes("打开前必须通过门槛")) throw new Error("浏览器规范缺少打开门槛");
+if (!browserProtocol.includes("必须打开")) throw new Error("浏览器规范缺少必须打开场景");
 if (!browserProtocol.includes("不要用打开页面代替主动推荐")) {
   throw new Error("浏览器规范没有区分首次推荐与主题学习");
 }
+if (!browserProtocol.includes("不得用字符图")) throw new Error("浏览器规范仍可能用字符图代替课程");
 
 const labRuntime = readFileSync(path.join(SKILL, "assets", "lab-kit", "lab.js"), "utf8");
 if (!labRuntime.includes("attachShadow")) throw new Error("项目预览没有与框架样式隔离");
