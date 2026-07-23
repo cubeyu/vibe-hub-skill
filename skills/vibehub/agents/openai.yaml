@@ -1,0 +1,4 @@
+interface:
+  display_name: "VibeHub"
+  short_description: "查知识、规划学习路径，并在真实项目中用可视化互动边做边学"
+  default_prompt: "使用 $vibehub；如果我的用途还不清楚，先问一句，否则直接选择合适的知识、学习路径或项目互动。"
