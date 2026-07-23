@@ -1,52 +1,73 @@
-# In-app browser protocol
+# Agent 内置浏览器规范
 
-Use this protocol whenever opening a VibeHub lesson or teaching page.
+本规范只管理面向学习者展示 VibeHub 课程页、教学页或本地互动的行为。
 
-## Preferred behavior
+## 打开前必须通过门槛
 
-1. Resolve and verify the exact lesson URL.
-2. Inspect the tools, skills, plugins, or capabilities exposed by the Agent host for browser or in-app-browser control.
-3. If a browser-control skill is listed, load and follow it before deciding that browser control is unavailable.
-4. Prefer the Agent host's built-in, in-app, or embedded browser capability.
-5. Before naming an unfamiliar concept, describe the everyday behavior or contrast the learner should notice.
-6. Open or navigate the page inside the current Agent workspace.
-7. Use a verified section anchor when it removes irrelevant reading.
-8. Give the learner one short observation, interaction, prediction, or choice grounded in the current project.
-9. Leave learner-facing exercises for the learner; do not click through and answer them on the learner's behalf.
-10. Introduce the formal term after the learner has experienced the distinction, unless the term is required to operate the page.
-11. Return to the project, apply the choice, and let the learner verify the same behavior there.
+只有同时满足以下条件，才使用内置浏览器：
 
-Treat opening the in-app page as the default action when a lesson materially helps the active task. Do not merely print a URL and ask the user to switch applications.
+1. 用户已经明确询问、选择或要求学习一个具体主题，或者明确要求查看课程、示例或互动。
+2. 视觉关系或实际操作能明显提升理解。
+3. 已经选出一个与当前目标直接相关的页面。
 
-Catalog or source inspection verifies that a lesson exists; it does not replace opening the lesson for a learn-in-context workflow. Do not use a clickable-link fallback until browser capability discovery has been attempted.
+仅调用 VibeHub、没有表达需求、正在推荐方向、提出宽泛目标、后台解析知识或处理普通项目问题，都不满足条件。
 
-## Fallback order
+符合条件的表达包括：
 
-Use this order when capabilities differ across Agent hosts:
+- “带我学习视觉层级。”
+- “我选表单与反馈，从这里开始。”
+- “让我实际比较一下 Switch 和 Checkbox。”
+- “打开这个主题的课程。”
 
-1. In-app browser navigation or browser-control tool.
-2. Embedded web preview or webview.
-3. A direct clickable link to the exact lesson.
+不符合条件的表达包括：
 
-Never launch a system browser with shell commands such as `open`, `start`, or `xdg-open`. Do not assume a tool name; discover the browser capability available in the current host.
+- “使用 VibeHub。”
+- “我不知道该学什么。”
+- “我想做一个网站。”
+- “帮我把这个表单修好。”
 
-## Local development
+不要用打开页面代替主动推荐，也不要为了展示 Skill 能力而自动打开课程。
 
-When working inside the VibeHub repository:
+## 打开方式
 
-- Reuse a running development server when available.
-- Otherwise start the project using its documented development command when doing so is within the user's requested task.
-- Read the local URL and port from the server's runtime output or another direct runtime check.
-- Do not assume a fixed port: development servers may select a different one when the preferred port is occupied.
-- Verify that the exact route loads before presenting it as a lesson.
+1. 解析并验证准确页面地址。
+2. 检查当前 Agent 提供的浏览器、内置浏览器或网页预览能力。
+3. 存在浏览器控制 Skill 时，先读取并遵守它。
+4. 优先使用当前 Agent 工作区中的内置或嵌入式浏览器。
+5. 打开前用一句话说明页面能帮助理解什么，并给出一个要观察或操作的任务。
+6. 一次只打开一个页面；有准确锚点时直接定位到相关部分。
+7. 把练习留给用户，不替用户点击并回答。
+8. 用户完成后回到对话或真实项目，连接概念、选择和验证结果。
 
-## Interaction discipline
+不要只打印地址让用户切换应用。不要使用 `open`、`start`、`xdg-open` 等命令启动系统浏览器。
 
-- Do not open a lesson for every unfamiliar word.
-- Do not navigate away from a page the learner is actively using without a task-relevant reason.
-- Do not open several lesson tabs at once; move through a learning path one decision at a time.
-- Do not ask “Which one is a Switch?” before the learner knows what the two behaviors mean.
-- Do not use correct terminology as evidence of understanding; require an observable project decision.
-- Do not block urgent fixes, destructive-action warnings, or security work behind a lesson.
-- If the user declines teaching or asks to continue directly, continue the project work.
-- Preserve accessibility: do not rely only on color, animation, hover, or audio when explaining what to observe.
+## 后备顺序
+
+当前 Agent 的能力不同时，按以下顺序使用：
+
+1. 内置浏览器或浏览器控制工具。
+2. 嵌入式网页预览。
+3. 指向准确课程页的可点击链接。
+
+先检查能力，再使用链接后备；不要假设工具名称。
+
+## 本地开发
+
+在 VibeHub 仓库中：
+
+- 优先复用正在运行的开发服务。
+- 没有服务时，只在用户任务授权范围内按项目文档启动。
+- 从真实运行输出或端口检查中取得地址，不要假设固定端口。
+- 展示前验证准确路由可以加载。
+
+教程作者为验证实现而预览页面，属于开发检查，不代表应该把该页面自动展示给学习者。
+
+## 互动纪律
+
+- 不为每个陌生词打开页面。
+- 不在用户尚未选择主题时打开第一课。
+- 不一次打开多个课程标签页。
+- 不用术语问答证明用户已经理解。
+- 不让课程阻挡紧急修复、安全提醒或用户明确要求直接完成的工作。
+- 用户拒绝教学时，立即回到原任务。
+- 不只依赖颜色、动画、悬停或声音解释重点。
