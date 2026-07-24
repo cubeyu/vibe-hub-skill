@@ -1,4 +1,4 @@
 interface:
   display_name: "VibeHub"
-  short_description: "帮你找到术语、选择学习方向，并结合项目掌握 Vibe Coding"
-  default_prompt: "使用 $vibehub 帮我选择一个 Vibe Coding 学习方向；如果我没有说明目标，请直接列出几个具体课题。"
+  short_description: "看懂 Agent 术语，找到学习起点，并结合当前项目学会使用"
+  default_prompt: "使用 $vibehub 帮我看懂 Agent 回复里的术语，或根据当前处境找到下一步学习起点。"
