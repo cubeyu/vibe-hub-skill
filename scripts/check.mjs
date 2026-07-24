@@ -37,11 +37,19 @@ if (!skillSource.includes("不问“你想学什么”或“你想做什么”")
 if (!skillSource.includes("不是通用网页制作、截图还原、代码修复或项目开发 Skill")) {
   throw new Error("SKILL.md 没有说明学习能力边界");
 }
-if (!skillSource.includes("浏览器有三种处理")) throw new Error("SKILL.md 没有明确浏览器分流");
+if (!skillSource.includes("不要让用户判断何时该看页面")) {
+  throw new Error("SKILL.md 仍把教学形式的选择交给用户");
+}
+if (!skillSource.includes("不要默认第一条候选正确")) {
+  throw new Error("SKILL.md 仍可能盲用第一条搜索结果");
+}
+if (!skillSource.includes("内联链接")) throw new Error("SKILL.md 没有要求返回官方页面链接");
 if (!skillSource.includes("不要自动打开第一课")) throw new Error("宽泛目标仍可能自动打开课程");
 
 const browserProtocol = readFileSync(path.join(SKILL, "references", "browser-protocol.md"), "utf8");
-if (!browserProtocol.includes("必须打开")) throw new Error("浏览器规范缺少必须打开场景");
+if (!browserProtocol.includes("不需要先说“打开页面”")) {
+  throw new Error("浏览器规范仍要求用户主动选择页面");
+}
 if (!browserProtocol.includes("不要用打开页面代替主动推荐")) {
   throw new Error("浏览器规范没有区分首次推荐与主题学习");
 }
