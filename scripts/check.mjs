@@ -1,10 +1,13 @@
-import { execFileSync } from "node:child_process";
+import { execFile, execFileSync } from "node:child_process";
 import { existsSync, readFileSync } from "node:fs";
+import { createServer } from "node:http";
 import path from "node:path";
+import { promisify } from "node:util";
 import { fileURLToPath } from "node:url";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const SKILL = path.join(ROOT, "skills", "vibehub");
+const execFileAsync = promisify(execFile);
 const REQUIRED = [
   "SKILL.md",
   "agents/openai.yaml",
@@ -30,19 +33,19 @@ const skillSource = readFileSync(path.join(SKILL, "SKILL.md"), "utf8");
 if (!/^---\nname: vibehub\n/m.test(skillSource)) throw new Error("SKILL.md 缺少正确的 name");
 if (!/^description: .+/m.test(skillSource)) throw new Error("SKILL.md 缺少 description");
 for (const phrase of [
-  "凡是用户描述效果、交互、状态或问题时可能缺少恰当技术名词",
+  "任何 Vibe Coding 编程任务及其后续补充",
+  "已经让 Agent 完成了一部分代码",
   "规范表达",
-  "主动术语提示",
-  "必须在正常回答中使用“主动术语提示”",
-  "Markdown 内联链接",
-  "先分析，再查询验证",
+  "每轮都检查",
+  "不要因为前几轮已经开始编程",
+  "一次查询候选",
+  "一个命令批量验证",
   "不要把用户整句原话直接当作搜索词",
-  "只有候选术语都没有可靠结果时",
-  "不默认第一个结果正确",
-  "最多验证三个术语",
+  "高置信度时只传一个候选",
+  "最多三个",
   "不要生成学习路线",
   "推荐替代控件或方案时说明适用前提",
-  "仍先用通俗语言完成用户当前的表达或解释",
+  "仍先完成当前任务",
 ]) {
   if (!skillSource.includes(phrase)) throw new Error(`SKILL.md 缺少规则：${phrase}`);
 }
@@ -72,6 +75,80 @@ const help = execFileSync(
 );
 if (!help.includes("VibeHub terminology resolver")) throw new Error("解析器帮助信息不正确");
 if (!help.includes("resolve --query")) throw new Error("解析器缺少 resolve 命令");
+if (!help.includes("Repeat up to 3 times")) throw new Error("解析器缺少批量候选说明");
+if (!help.includes("--compact")) throw new Error("解析器缺少紧凑输出");
+if (!help.includes("Defaults to 1")) throw new Error("解析器默认结果数不是 1");
 if (help.includes("journey") || help.includes("activity")) throw new Error("解析器仍暴露学习路线或练习命令");
+
+const requests = [];
+const server = createServer((request, response) => {
+  const url = new URL(request.url, `http://${request.headers.host}`);
+  requests.push(url.pathname);
+  response.setHeader("Content-Type", "application/json");
+
+  if (url.pathname === "/.well-known/vibehub.json") {
+    response.end(JSON.stringify({
+      data: {
+        apiBaseUrl: `http://${request.headers.host}/api`,
+        schemaVersion: 1,
+      },
+    }));
+    return;
+  }
+
+  if (url.pathname === "/api/search") {
+    const query = url.searchParams.get("q");
+    const entry = query === "Tooltip"
+      ? { id: "tooltip", title: "文字提示", secondaryTitle: "Tooltip" }
+      : { id: "hover", title: "悬停", secondaryTitle: "Hover" };
+    response.end(JSON.stringify({
+      data: {
+        results: [{
+          ...entry,
+          tagline: `${entry.title} definition`,
+          url: `https://vibe-hub.org/${entry.id}`,
+          score: 500,
+          matchedFields: ["id"],
+        }],
+      },
+    }));
+    return;
+  }
+
+  response.statusCode = 404;
+  response.end(JSON.stringify({ error: { message: "not found" } }));
+});
+
+await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
+try {
+  const address = server.address();
+  const siteUrl = `http://127.0.0.1:${address.port}`;
+  const { stdout } = await execFileAsync(process.execPath, [
+    path.join(SKILL, "scripts", "vibehub.mjs"),
+    "resolve",
+    "--query",
+    "Tooltip",
+    "--query",
+    "Hover",
+    "--compact",
+    "--site-url",
+    siteUrl,
+  ], { encoding: "utf8" });
+  const batch = JSON.parse(stdout);
+  if (batch.mode !== "compact" || batch.results?.length !== 2) {
+    throw new Error("解析器批量紧凑输出不正确");
+  }
+  if (requests.filter((pathname) => pathname === "/.well-known/vibehub.json").length !== 1) {
+    throw new Error("批量查询重复请求 manifest");
+  }
+  if (requests.filter((pathname) => pathname === "/api/search").length !== 2) {
+    throw new Error("批量查询没有逐个验证候选");
+  }
+  if (requests.some((pathname) => pathname.includes("/lessons/"))) {
+    throw new Error("紧凑查询不应请求术语详情");
+  }
+} finally {
+  await new Promise((resolve, reject) => server.close((error) => (error ? reject(error) : resolve())));
+}
 
 process.stdout.write("VibeHub Skill 检查通过：仅保留术语表达与查询能力。\n");

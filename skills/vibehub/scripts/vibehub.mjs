@@ -9,11 +9,13 @@ const BUNDLED_CONFIG = JSON.parse(
 const HELP = `VibeHub terminology resolver
 
 Usage:
-  node scripts/vibehub.mjs resolve --query "Hover" [options]
+  node scripts/vibehub.mjs resolve --query "Tooltip" [--query "Hover"] [options]
 
 Options:
+  --query <term>    Candidate term to verify. Repeat up to 3 times.
   --site-url <url>  VibeHub site origin. Overrides VIBEHUB_SITE_URL and bundled config.
-  --limit <1-5>     Number of enriched candidates. Defaults to 3.
+  --limit <1-5>     Results per query. Defaults to 1.
+  --compact         Return search summaries without fetching lesson details.
   --timeout <ms>    Request timeout. Defaults to 10000.
   --help            Show this help.
 `;
@@ -31,13 +33,17 @@ function parseArgs(argv) {
     const token = rest[index];
     if (!token.startsWith("--")) throw new Error(`Unexpected argument: ${token}`);
     const key = token.slice(2).replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
-    if (key === "help") {
-      options.help = true;
+    if (key === "help" || key === "compact") {
+      options[key] = true;
       continue;
     }
     const value = rest[index + 1];
     if (!value || value.startsWith("--")) throw new Error(`Missing value for ${token}`);
-    options[key] = value;
+    if (key === "query") {
+      options.query = [...(options.query || []), value];
+    } else {
+      options[key] = value;
+    }
     index += 1;
   }
   return { command, options };
@@ -126,11 +132,40 @@ function compactCandidate(summary, detail) {
   };
 }
 
-async function resolve(options) {
-  const query = sanitizeRemoteText(options.query, 500);
-  if (!query) throw new Error("--query is required");
+function compactSearchCandidate(summary) {
+  return {
+    id: summary.id,
+    title: summary.title,
+    secondaryTitle: summary.secondaryTitle || null,
+    aliases: summary.aliases || [],
+    tagline: summary.tagline || "",
+    url: summary.url,
+    match: {
+      score: summary.score,
+      fields: summary.matchedFields || [],
+    },
+  };
+}
 
-  const limit = Number(options.limit || 3);
+function normalizeQueries(values) {
+  const queries = [];
+  const seen = new Set();
+  for (const value of values || []) {
+    const query = sanitizeRemoteText(value, 120);
+    const key = query.toLocaleLowerCase();
+    if (!query || seen.has(key)) continue;
+    seen.add(key);
+    queries.push(query);
+  }
+  if (!queries.length) throw new Error("--query is required");
+  if (queries.length > 3) throw new Error("--query may be repeated at most 3 times");
+  return queries;
+}
+
+async function resolve(options) {
+  const queries = normalizeQueries(options.query);
+
+  const limit = Number(options.limit || 1);
   if (!Number.isInteger(limit) || limit < 1 || limit > 5) {
     throw new Error("--limit must be an integer from 1 to 5");
   }
@@ -151,37 +186,52 @@ async function resolve(options) {
   }
 
   const apiBaseUrl = manifest.apiBaseUrl.replace(/\/$/, "");
-  const searchUrl = new URL(`${apiBaseUrl}/search`);
-  searchUrl.searchParams.set("q", query);
-  searchUrl.searchParams.set("limit", String(limit));
-  const search = requireData(
-    await fetchJson(searchUrl, { timeout, label: "VibeHub search" }),
-    "VibeHub search",
-  );
-  if (!Array.isArray(search.results)) throw new Error("VibeHub search response is missing results");
-
-  const candidates = await Promise.all(search.results.map(async (summary) => {
-    const lessonUrl = `${apiBaseUrl}/lessons/${encodeURIComponent(summary.id)}`;
-    try {
-      const detail = requireData(
-        await fetchJson(lessonUrl, { timeout, label: `VibeHub lesson ${summary.id}` }),
-        `VibeHub lesson ${summary.id}`,
-      );
-      return compactCandidate(summary, detail);
-    } catch {
-      return compactCandidate(summary, summary);
+  const detailRequests = new Map();
+  const getDetail = (summary) => {
+    if (!detailRequests.has(summary.id)) {
+      const lessonUrl = `${apiBaseUrl}/lessons/${encodeURIComponent(summary.id)}`;
+      detailRequests.set(summary.id, fetchJson(lessonUrl, {
+        timeout,
+        label: `VibeHub lesson ${summary.id}`,
+      }).then(
+        (payload) => requireData(payload, `VibeHub lesson ${summary.id}`),
+        () => null,
+      ));
     }
+    return detailRequests.get(summary.id);
+  };
+
+  const results = await Promise.all(queries.map(async (query) => {
+    const searchUrl = new URL(`${apiBaseUrl}/search`);
+    searchUrl.searchParams.set("q", query);
+    searchUrl.searchParams.set("limit", String(limit));
+    const search = requireData(
+      await fetchJson(searchUrl, { timeout, label: `VibeHub search "${query}"` }),
+      `VibeHub search "${query}"`,
+    );
+    if (!Array.isArray(search.results)) {
+      throw new Error(`VibeHub search "${query}" response is missing results`);
+    }
+
+    const candidates = options.compact
+      ? search.results.map(compactSearchCandidate)
+      : await Promise.all(search.results.map(async (summary) => (
+        compactCandidate(summary, await getDetail(summary) || summary)
+      )));
+
+    return { query, count: candidates.length, candidates };
   }));
 
-  return {
+  const response = {
     ok: true,
     source: "vibehub",
     schemaVersion: manifest.schemaVersion,
     revision: manifest.revision || manifestPayload.revision || null,
-    query,
-    count: candidates.length,
-    candidates,
+    mode: options.compact ? "compact" : "full",
   };
+
+  if (results.length === 1) return { ...response, ...results[0] };
+  return { ...response, queries, results };
 }
 
 async function main() {

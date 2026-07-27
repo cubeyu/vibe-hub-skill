@@ -1,4 +1,7 @@
 interface:
   display_name: "VibeHub"
-  short_description: "把模糊需求改成准确表达，并主动指出恰当技术术语"
-  default_prompt: "使用 $vibehub 检查我的 Vibe Coding 描述：把模糊需求改成可以直接发给 Agent 的准确表达，并在每次缺少恰当技术名词时主动指出术语、解释和链接。"
+  short_description: "持续识别 Vibe Coding 补充需求中的准确术语并提供内链"
+  default_prompt: "使用 $vibehub 持续检查这段 Vibe Coding 对话，在完成每轮开发任务时主动指出用户没有说出的准确术语、解释和 VibeHub 内链。"
+
+policy:
+  allow_implicit_invocation: true
