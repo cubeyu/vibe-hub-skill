@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520" viewBox="0 0 1200 520" role="img" aria-labelledby="title desc">
-  <title id="title">用任何 Agent 学懂 Vibe Coding 术语</title>
-  <desc id="desc">VibeHub Skill 会结合当前任务通俗解释 Agent 回复里的术语，并通过学习路径和本地互动帮助用户真正理解。</desc>
+  <title id="title">让 Vibe Coding 表达更准确</title>
+  <desc id="desc">VibeHub Skill 会把口语描述改成准确需求，并主动解释和链接相关术语。</desc>
   <defs>
     <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
       <path d="M40 0H0V40" fill="none" stroke="#DCE3F4" stroke-width="1"/>
@@ -27,10 +27,10 @@
       </g>
       <text x="34" y="19" fill="#3B5DDD" font-size="14" font-weight="700" letter-spacing="1.8">VIBEHUB SKILL</text>
 
-      <text x="0" y="92" fill="#17181C" font-size="52" font-weight="760" letter-spacing="-1.8">用任何 Agent</text>
-      <text x="0" y="154" fill="#17181C" font-size="52" font-weight="760" letter-spacing="-1.8">学懂 Vibe Coding 术语</text>
-      <text x="0" y="198" fill="#5E6370" font-size="17">看不懂 Agent 的回复也没关系。把原话贴过来，它会结合</text>
-      <text x="0" y="226" fill="#5E6370" font-size="17">当前任务用大白话解释，再告诉你怎样继续。</text>
+      <text x="0" y="92" fill="#5E6370" font-size="32" font-weight="560" letter-spacing="-.8">让 Vibe Coding</text>
+      <text x="0" y="154" fill="#17181C" font-size="56" font-weight="720" letter-spacing="-2">表达更<tspan fill="#3B5DDD">准确</tspan></text>
+      <text x="0" y="198" fill="#5E6370" font-size="17">用准确术语重写口语描述，主动标出值得认识的名词，</text>
+      <text x="0" y="226" fill="#5E6370" font-size="17">并附上通俗解释和 VibeHub 链接。</text>
 
       <g transform="translate(0 260)" filter="url(#shadow)">
         <rect width="518" height="108" rx="16" fill="#FFFFFF" stroke="#D5DCEF"/>
@@ -44,11 +44,11 @@
       </g>
 
       <g transform="translate(0 398)" fill="#686D7B" font-size="14" font-weight="600">
-        <text x="0" y="18">看懂 Agent 说法</text>
+        <text x="0" y="18">规范需求表达</text>
         <circle cx="134" cy="13" r="2" fill="#A9AFC0"/>
-        <text x="150" y="18">找到术语</text>
-        <circle cx="234" cy="13" r="2" fill="#A9AFC0"/>
-        <text x="250" y="18">项目里练会</text>
+        <text x="150" y="18">主动提示术语</text>
+        <circle cx="274" cy="13" r="2" fill="#A9AFC0"/>
+        <text x="290" y="18">内联解释与链接</text>
       </g>
     </g>
 
@@ -56,12 +56,12 @@
       <rect width="500" height="440" rx="20" fill="#FFFFFF" stroke="#D4DCEE"/>
       <g transform="translate(28 24)">
         <circle cx="6" cy="6" r="6" fill="#3B5DDD"/>
-        <text x="22" y="11" fill="#30333B" font-size="14" font-weight="700">从 Agent 的一句术语，到能继续推进</text>
+        <text x="22" y="11" fill="#30333B" font-size="14" font-weight="700">从一句口语，到可以直接发送</text>
 
         <g transform="translate(0 42)">
           <rect width="444" height="68" rx="12" fill="#F7F8FC" stroke="#E3E6EF"/>
-          <text x="18" y="24" fill="#9296A3" font-size="12" font-weight="700">AGENT 说</text>
-          <text x="18" y="48" fill="#272930" font-size="15" font-weight="600">这个表单需要做状态管理。</text>
+          <text x="18" y="24" fill="#9296A3" font-size="12" font-weight="700">你说</text>
+          <text x="18" y="48" fill="#272930" font-size="15" font-weight="600">这个按钮鼠标放上去变个色。</text>
         </g>
 
         <path d="M24 112v24" stroke="#B6C3F3" stroke-width="2" stroke-linecap="round"/>
@@ -74,8 +74,8 @@
             <rect x="9" y="13" width="24" height="16" rx="8" fill="#3B5DDD"/>
             <circle cx="25" cy="21" r="5" fill="#FFFFFF"/>
           </g>
-          <text x="72" y="29" fill="#7A8090" font-size="12" font-weight="700">VIBEHUB 结合当前任务解释</text>
-          <text x="72" y="55" fill="#22242A" font-size="17" font-weight="750">状态管理 · State Management</text>
+          <text x="72" y="29" fill="#7A8090" font-size="12" font-weight="700">VIBEHUB 找到准确术语</text>
+          <text x="72" y="55" fill="#22242A" font-size="17" font-weight="750">Hover · Active · Transition</text>
         </g>
 
         <path d="M24 216v24" stroke="#B6C3F3" stroke-width="2" stroke-linecap="round"/>
@@ -83,23 +83,23 @@
 
         <g transform="translate(0 242)">
           <rect width="444" height="126" rx="14" fill="#FFFFFF" stroke="#D8DDEA"/>
-          <text x="16" y="24" fill="#8B8F9C" font-size="12" font-weight="700">解释以后，你可以继续说</text>
+          <text x="16" y="24" fill="#8B8F9C" font-size="12" font-weight="700">可以直接对 Agent 说</text>
           <g transform="translate(16 38)">
             <rect width="196" height="54" rx="10" fill="#F2F5FF" stroke="#6F88E8" stroke-width="1.5"/>
-            <text x="13" y="22" fill="#294FCB" font-size="13" font-weight="700">先列出现有状态</text>
-            <text x="13" y="42" fill="#7B86AF" font-size="11">loading · error · success</text>
+            <text x="13" y="22" fill="#294FCB" font-size="13" font-weight="700">补充 Hover 状态</text>
+            <text x="13" y="42" fill="#7B86AF" font-size="11">鼠标移入时改变颜色</text>
           </g>
           <g transform="translate(224 38)">
             <rect width="204" height="54" rx="10" fill="#FAFAFC" stroke="#E2E4EB"/>
-            <text x="13" y="22" fill="#353840" font-size="13" font-weight="700">再只改提交反馈</text>
-            <text x="13" y="42" fill="#9498A5" font-size="11">加载、错误和成功提示</text>
+            <text x="13" y="22" fill="#353840" font-size="13" font-weight="700">使用 Transition</text>
+            <text x="13" y="42" fill="#9498A5" font-size="11">让状态变化更自然</text>
           </g>
-          <text x="16" y="113" fill="#5F6472" font-size="12">先看懂当前语境，再继续向 Agent 提需求。</text>
+          <text x="16" y="113" fill="#5F6472" font-size="12">保留原意，只补真正有用的专业表达。</text>
         </g>
 
         <g transform="translate(0 384)">
           <path d="M0 0h444" stroke="#E7E9F0"/>
-          <text x="0" y="25" fill="#3B5DDD" font-size="13" font-weight="700">理解后，继续推进当前项目并验收</text>
+          <text x="0" y="25" fill="#3B5DDD" font-size="13" font-weight="700">术语直接带解释和 VibeHub 链接</text>
           <path d="M423 20h12M431 16l4 4-4 4" fill="none" stroke="#3B5DDD" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
         </g>
       </g>

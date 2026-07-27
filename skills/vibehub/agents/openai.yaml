@@ -1,4 +1,4 @@
 interface:
   display_name: "VibeHub"
-  short_description: "看懂 Agent 术语，找到学习起点，并结合当前项目学会使用"
-  default_prompt: "使用 $vibehub 帮我看懂 Agent 回复里的术语，或根据当前处境找到下一步学习起点。"
+  short_description: "把模糊需求改成准确表达，并主动指出恰当技术术语"
+  default_prompt: "使用 $vibehub 检查我的 Vibe Coding 描述：把模糊需求改成可以直接发给 Agent 的准确表达，并在每次缺少恰当技术名词时主动指出术语、解释和链接。"
