@@ -35,6 +35,8 @@ Skill 会保留原意，并把需求改成类似这样：
 
 找到明确术语时，第一次出现会直接链接到 VibeHub。Skill 不会擅自增加框架、组件库、参数或实现方案。
 
+Skill 不会把整句需求直接丢给搜索接口。它会先结合当前语境推断 1–3 个候选术语，再分别查询 VibeHub 验证名称、用途和边界；只有候选都不匹配时，才用精炼后的行为短语兜底。
+
 ### 2. 主动提示相关术语
 
 你不需要先问“这个叫什么”。每当你的描述存在歧义或缺少恰当技术名词，Skill 都会主动指出最相关的 1–3 个概念：
@@ -100,7 +102,7 @@ npm test
 
 ```bash
 node skills/vibehub/scripts/vibehub.mjs resolve \
-  --query "鼠标放上去按钮变色" \
+  --query "Hover" \
   --site-url http://localhost:3100
 ```
 

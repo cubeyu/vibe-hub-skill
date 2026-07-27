@@ -9,7 +9,7 @@ const BUNDLED_CONFIG = JSON.parse(
 const HELP = `VibeHub terminology resolver
 
 Usage:
-  node scripts/vibehub.mjs resolve --query "鼠标放上去按钮变色" [options]
+  node scripts/vibehub.mjs resolve --query "Hover" [options]
 
 Options:
   --site-url <url>  VibeHub site origin. Overrides VIBEHUB_SITE_URL and bundled config.
